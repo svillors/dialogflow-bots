@@ -8,7 +8,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 
 load_dotenv()
 PROJECT_ID = os.getenv("PROJECT_ID")
-SESSION_ID = os.getenv('SESSION_ID')
 
 
 def detect_intent_texts(project_id, session_id, text, language_code='ru'):
@@ -39,7 +38,8 @@ def help_command(update: Update, context: CallbackContext) -> None:
 
 
 def answer_by_dialogflow(update: Update, context: CallbackContext) -> None:
-    answer = detect_intent_texts(PROJECT_ID, SESSION_ID, update.message.text)
+    session_id = update.effective_user.id
+    answer = detect_intent_texts(PROJECT_ID, session_id, update.message.text)
     update.message.reply_text(answer)
 
 
