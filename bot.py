@@ -7,7 +7,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 
 
 load_dotenv()
-PROJECT_ID = os.getenv("PROJECT_ID")
+PROJECT_ID = os.environ["PROJECT_ID"]
 
 
 def detect_intent_texts(project_id, session_id, text, language_code='ru'):
@@ -44,7 +44,7 @@ def answer_by_dialogflow(update: Update, context: CallbackContext) -> None:
 
 
 def main() -> None:
-    token = os.getenv('TG_BOT_TOKEN')
+    token = os.environ['TG_BOT_TOKEN']
     updater = Updater(token)
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler("start", start))
