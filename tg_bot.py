@@ -1,13 +1,9 @@
 import os
 
 from dotenv import load_dotenv
-from google.cloud import dialogflow 
+from google.cloud import dialogflow
 from telegram import Update, ForceReply
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-
-
-load_dotenv()
-PROJECT_ID = os.environ["PROJECT_ID"]
 
 
 def detect_intent_texts(project_id, session_id, text, language_code='ru'):
@@ -39,14 +35,18 @@ def help_command(update: Update, context: CallbackContext) -> None:
 
 def answer_by_dialogflow(update: Update, context: CallbackContext) -> None:
     session_id = update.effective_user.id
-    answer = detect_intent_texts(PROJECT_ID, session_id, update.message.text)
+    project_id = context.bot_data['project_id']
+    answer = detect_intent_texts(project_id, session_id, update.message.text)
     update.message.reply_text(answer)
 
 
 def main() -> None:
+    load_dotenv()
     token = os.environ['TG_BOT_TOKEN']
+    project_id = os.environ["PROJECT_ID"]
     updater = Updater(token)
     dispatcher = updater.dispatcher
+    dispatcher.bot_data['project_id'] = project_id
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, answer_by_dialogflow))
