@@ -42,9 +42,13 @@ def help_command(update: Update, context: CallbackContext) -> None:
 
 
 def answer_by_dialogflow(update: Update, context: CallbackContext) -> None:
-    session_id = update.effective_user.id
+    tg_id = update.effective_user.id
     project_id = context.bot_data['project_id']
-    answer = detect_intent_texts(project_id, session_id, update.message.text)
+    answer = detect_intent_texts(
+        project_id,
+        f'tg-{tg_id}',
+        update.message.text
+    )
     update.message.reply_text(answer)
 
 

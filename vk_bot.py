@@ -32,7 +32,7 @@ class VkBotHandler(logging.Handler):
 
 def answer_by_dialogflow(event, vk_api, project_id):
     user_id = event.user_id
-    text = detect_intent_texts(project_id, user_id, event.text)
+    text = detect_intent_texts(project_id, f'vk-{user_id}', event.text)
     if text:
         vk_api.messages.send(
             user_id=user_id,
