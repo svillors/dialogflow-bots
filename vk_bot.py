@@ -4,8 +4,9 @@ import logging
 
 import vk_api as vk
 from vk_api.longpoll import VkLongPoll, VkEventType
-from google.cloud import dialogflow
 from dotenv import load_dotenv
+
+from qwe.tg_bot.dialogflow_utils import detect_intent_texts
 
 
 logger = logging.getLogger('vk_bot_logger')
@@ -29,23 +30,7 @@ class VkBotHandler(logging.Handler):
             )
 
 
-def detect_intent_texts(project_id, session_id, text, language_code='ru'):
-    session_client = dialogflow.SessionsClient()
-    session = session_client.session_path(project_id, session_id)
-
-    text_input = dialogflow.TextInput(text=text, language_code=language_code)
-
-    query_input = dialogflow.QueryInput(text=text_input)
-
-    response = session_client.detect_intent(
-        request={"session": session, "query_input": query_input}
-    )
-    if response.query_result.intent.is_fallback:
-        return
-    return response.query_result.fulfillment_text
-
-
-def answer(event, vk_api, project_id):
+def answer_by_dialogflow(event, vk_api, project_id):
     user_id = event.user_id
     text = detect_intent_texts(project_id, user_id, event.text)
     if text:
@@ -71,7 +56,7 @@ def main():
     for event in longpoll.listen():
         try:
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-                answer(event, vk_api, project_id)
+                answer_by_dialogflow(event, vk_api, project_id)
         except Exception as e:
             logger.error(e, exc_info=True)
 

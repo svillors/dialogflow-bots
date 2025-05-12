@@ -2,9 +2,10 @@ import os
 import logging
 
 from dotenv import load_dotenv
-from google.cloud import dialogflow
 from telegram import Update, ForceReply
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+
+from qwe.tg_bot.dialogflow_utils import detect_intent_texts
 
 
 logger = logging.getLogger('tg_bot_logger')
@@ -26,21 +27,6 @@ class TelegramBotHandler(logging.Handler):
                 chat_id=self.admin_id,
                 text=f"Бот упал с ошибкой:\n\n{exc_name} - {exc_value}"
             )
-
-
-def detect_intent_texts(project_id, session_id, text, language_code='ru'):
-    session_client = dialogflow.SessionsClient()
-    session = session_client.session_path(project_id, session_id)
-
-    text_input = dialogflow.TextInput(text=text, language_code=language_code)
-
-    query_input = dialogflow.QueryInput(text=text_input)
-
-    response = session_client.detect_intent(
-        request={"session": session, "query_input": query_input}
-    )
-
-    return response.query_result.fulfillment_text
 
 
 def start(update: Update, context: CallbackContext) -> None:
