@@ -66,7 +66,11 @@ def main() -> None:
     dispatcher.bot_data['project_id'] = project_id
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, answer_by_dialogflow))
+    dispatcher.add_handler(MessageHandler(
+            Filters.text & ~Filters.command,
+            answer_by_dialogflow
+        )
+    )
     try:
         updater.start_polling()
         updater.idle()
